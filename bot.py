@@ -15,8 +15,8 @@ async def scrap_members(client, message):
     chat_id = message.chat.id
     m = await message.edit("Scrapping members...")
     args = message.text.split(" ")
-    if len(args) < 2:
-        await message.edit("Please provide source chat id")
+    if len(args) != 2:
+        await m.edit("Invalid command usage")
         return
     source_chat = args[1]
     added = 0
