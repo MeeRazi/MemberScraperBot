@@ -12,18 +12,19 @@ bot = Client("MemberScraper", api_id=API_ID, api_hash=API_HASH, session_string=S
 
 @bot.on_message(filters.command("scrap") & filters.me)
 async def scrap_members(client, message):
-    target_chat = message.text.split(" ")[1]
-    if not target_chat:
-        await message.edit("Please provide a chat id")
+    args = message.text.split(" ")
+    if len(args) < 3:
+        await message.edit("Please provide both target and source chat ids")
         return
-    is_valid_chat = await client.get_chat(target_chat)
-    if not is_valid_chat:
+    target_chat, source_chat = args[1], args[2]
+    is_valid_target_chat = await client.get_chat(target_chat)
+    is_valid_source_chat = await client.get_chat(source_chat)
+    if not is_valid_target_chat or not is_valid_source_chat:
         await message.edit("Invalid chat id")
         return
-    chat_id = message.chat.id
     added = 0
     total = 0
-    async for member in client.get_chat_members(chat_id):
+    async for member in client.get_chat_members(source_chat):
         total += 1
         try:
             success = await client.add_chat_members(target_chat, member.user.id)
@@ -36,3 +37,5 @@ async def scrap_members(client, message):
         except Exception as e:
             logging.error(f"Failed to add {member.user.id} to chat: {e}")
     await client.send_message("me", text=f"Added {added}/{total} members to chat")
+    
+bot.run()    
