@@ -12,26 +12,27 @@ bot = Client("MemberScraper", api_id=API_ID, api_hash=API_HASH, session_string=S
 
 @bot.on_message(filters.command("scrap") & filters.me)
 async def scrap_members(client, message):
+    chat_id = message.chat.id
     m = await message.edit("Scrapping members...")
     args = message.text.split(" ")
-    if len(args) < 3:
-        await message.edit("Please provide both target and source chat ids")
+    if len(args) < 2:
+        await message.edit("Please provide source chat id")
         return
-    target_chat, source_chat = args[1], args[2]
+    source_chat = args[1]
     added = 0
     total = 0
     async for member in client.get_chat_members(source_chat):
         total += 1
         try:
-            success = await client.add_chat_members(target_chat, member.user.id)
+            success = await client.add_chat_members(chat_id, member.user.id)
             if success:
                 added += 1
                 logging.info(f"Added {member.user.id} to chat")
-                await m.edit(f"Added {added}/{total} members to chat")
-                await asyncio.sleep(.1)
+                await m.edit(f"Added {added} members to chat")
+                await asyncio.sleep(1)
         except FloodWait as e:
             logging.warning(f"FloodWait for {e.x} seconds")
-            await asyncio.sleep(e.x)
+            await asyncio.sleep(e)
         except Exception as e:
             logging.error(f"Failed to add {member.user.id} to chat: {e}")
     await client.send_message("me", text=f"Added {added}/{total} members to chat")
