@@ -21,10 +21,10 @@ async def scrap_members(client, message):
     source_chat = args[1]
     added = 0
     total = 0
-    async for member in client.get_chat_members(source_chat):
+    async for member in client.get_chat_members(chat_id):
         total += 1
         try:
-            success = await client.add_chat_members(chat_id, member.user.id)
+            success = await client.add_chat_members(source_chat, member.user.id)
             if success:
                 added += 1
                 logging.info(f"Added {member.user.id} to chat")
