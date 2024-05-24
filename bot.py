@@ -18,11 +18,6 @@ async def scrap_members(client, message):
         await message.edit("Please provide both target and source chat ids")
         return
     target_chat, source_chat = args[1], args[2]
-    is_valid_target_chat = await client.get_chat(target_chat)
-    is_valid_source_chat = await client.get_chat(source_chat)
-    if not is_valid_target_chat or not is_valid_source_chat:
-        await message.edit("Invalid chat id")
-        return
     added = 0
     total = 0
     async for member in client.get_chat_members(source_chat):
