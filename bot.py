@@ -31,8 +31,8 @@ async def scrap_members(client, message):
                 await m.edit(f"Added {added} members to chat")
                 await asyncio.sleep(1)
         except FloodWait as e:
-            logging.warning(f"FloodWait for {e.x} seconds")
-            await asyncio.sleep(e)
+            logging.warning(f"FloodWait for {e.value} seconds")
+            await asyncio.sleep(e.value)
         except Exception as e:
             logging.error(f"Failed to add {member.user.id} to chat: {e}")
     await client.send_message("me", text=f"Added {added}/{total} members to chat")
