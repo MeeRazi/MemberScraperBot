@@ -29,7 +29,7 @@ async def scrap_members(client, message):
                 added += 1
                 logging.info(f"Added {member.user.id} to chat")
                 await m.edit(f"Added {added} members to chat")
-                await asyncio.sleep(3)
+                await asyncio.sleep(3) # Adjust this (I dont know what is the required sleep time, so I put 3 seconds)
         except FloodWait as e:
             logging.warning(f"FloodWait for {e.value} seconds")
             await asyncio.sleep(e.value)
