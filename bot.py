@@ -36,5 +36,53 @@ async def scrap_members(client, message):
         except Exception as e:
             logging.error(f"Failed to add {member.user.id} to chat: {e}")
     await client.send_message("me", text=f"Added {added}/{total} members to chat")
+    
+@bot.on_message(filters.command(["run", "approve"], [".", "/"]))                     
+async def approve(client, message):
+    Id = message.chat.id
+    await message.delete(True)
+ 
+    try:
+       while True:
+           try:
+               await client.approve_all_chat_join_requests(Id)         
+           except FloodWait as t:
+               asyncio.sleep(t.value)
+               await client.approve_all_chat_join_requests(Id) 
+           except Exception as e:
+               logging.error(str(e))
+    except FloodWait as s:
+        asyncio.sleep(s.value)
+        while True:
+           try:
+               await client.approve_all_chat_join_requests(Id)         
+           except FloodWait as t:
+               asyncio.sleep(t.value)
+               await client.approve_all_chat_join_requests(Id) 
+           except Exception as e:
+               logging.error(str(e))
+
+# command to delete all messages
+@bot.on_message(filters.me & filters.command("clearchat", prefixes="."))
+async def clearchat(_, message):
+    chat_id = message.chat.id
+
+    # send msg to show that bot is working
+    await message.edit("Deleting all messages...")
+    await asyncio.sleep(2)
+
+    # get all messages
+    async for msg in bot.get_chat_history(chat_id):
+        try:
+            # delete message
+            await bot.delete_user_history(chat_id, msg.from_user.id)
+        except FloodWait as e:
+            # wait for a while
+            print(e)
+            await asyncio.sleep(e.x)
+        except Exception as e:
+            print(e)
+            pass
+
 
 bot.run()    
